@@ -1,10 +1,25 @@
+# Helper function to apply mass matrix to residual
+# For identity matrix (I), this is a no-op
+# For other matrices, we compute M * x and store in x
+@inline function __apply_mass_matrix!(residᵢ, mass_matrix::UniformScaling, tmp)
+    # Identity matrix - no modification needed
+    return nothing
+end
+
+@inline function __apply_mass_matrix!(residᵢ, mass_matrix::AbstractMatrix, tmp)
+    # Apply M * residᵢ, using tmp as workspace
+    mul!(tmp, mass_matrix, residᵢ)
+    copyto!(residᵢ, tmp)
+    return nothing
+end
+
 function Φ!(residual, cache::MIRKCache, y, u, trait)
     return Φ!(residual, cache.fᵢ_cache, cache.k_discrete, cache.f, cache.TU,
-        y, u, cache.p, cache.mesh, cache.mesh_dt, cache.stage, trait)
+        y, u, cache.p, cache.mesh, cache.mesh_dt, cache.stage, cache.mass_matrix, trait)
 end
 
 @views function Φ!(residual, fᵢ_cache, k_discrete, f!, TU::MIRKTableau,
-        y, u, p, mesh, mesh_dt, stage::Int, ::DiffCacheNeeded)
+        y, u, p, mesh, mesh_dt, stage::Int, mass_matrix, ::DiffCacheNeeded)
     (; c, v, x, b) = TU
 
     tmp = get_tmp(fᵢ_cache, u)
@@ -23,14 +38,15 @@ end
             f!(K[:, r], tmp, p, mesh[i] + c[r] * h)
         end
 
-        # Update residual
+        # Update residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp)
         __maybe_matmul!(residᵢ, K[:, 1:stage], b[1:stage], -h, T(1))
     end
 end
 
 @views function Φ!(residual, fᵢ_cache, k_discrete, f!, TU::MIRKTableau, y,
-        u, p, mesh, mesh_dt, stage::Int, ::NoDiffCacheNeeded)
+        u, p, mesh, mesh_dt, stage::Int, mass_matrix, ::NoDiffCacheNeeded)
     (; c, v, x, b) = TU
 
     tmp = similar(fᵢ_cache)
@@ -49,19 +65,20 @@ end
             f!(K[:, r], tmp, p, mesh[i] + c[r] * h)
         end
 
-        # Update residual
+        # Update residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp)
         __maybe_matmul!(residᵢ, K[:, 1:stage], b[1:stage], -h, T(1))
     end
 end
 
 function Φ(cache::MIRKCache, y, u, trait)
     return Φ(cache.fᵢ_cache, cache.k_discrete, cache.f, cache.TU, y, u,
-        cache.p, cache.mesh, cache.mesh_dt, cache.stage, trait)
+        cache.p, cache.mesh, cache.mesh_dt, cache.stage, cache.mass_matrix, trait)
 end
 
 @views function Φ(fᵢ_cache, k_discrete, f, TU::MIRKTableau, y, u,
-        p, mesh, mesh_dt, stage::Int, ::DiffCacheNeeded)
+        p, mesh, mesh_dt, stage::Int, mass_matrix, ::DiffCacheNeeded)
     (; c, v, x, b) = TU
     residuals = [safe_similar(yᵢ) for yᵢ in y[1:(end - 1)]]
     tmp = get_tmp(fᵢ_cache, u)
@@ -80,8 +97,9 @@ end
             K[:, r] .= f(tmp, p, mesh[i] + c[r] * h)
         end
 
-        # Update residual
+        # Update residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp)
         __maybe_matmul!(residᵢ, K[:, 1:stage], b[1:stage], -h, T(1))
     end
 
@@ -89,7 +107,7 @@ end
 end
 
 @views function Φ(fᵢ_cache, k_discrete, f, TU::MIRKTableau, y, u, p,
-        mesh, mesh_dt, stage::Int, ::NoDiffCacheNeeded)
+        mesh, mesh_dt, stage::Int, mass_matrix, ::NoDiffCacheNeeded)
     (; c, v, x, b) = TU
     residuals = [safe_similar(yᵢ) for yᵢ in y[1:(end - 1)]]
     tmp = similar(fᵢ_cache)
@@ -108,8 +126,9 @@ end
             K[:, r] .= f(tmp, p, mesh[i] + c[r] * h)
         end
 
-        # Update residual
+        # Update residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp)
         __maybe_matmul!(residᵢ, K[:, 1:stage], b[1:stage], -h, T(1))
     end
 

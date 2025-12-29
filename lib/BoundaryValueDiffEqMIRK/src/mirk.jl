@@ -13,6 +13,7 @@
     TU                         # MIRK Tableau
     ITU                        # MIRK Interpolation Tableau
     bcresid_prototype
+    mass_matrix                # Mass matrix for DAE support
     # Everything below gets resized in adaptive methods
     mesh                       # Discrete mesh
     mesh_dt                    # Step size
@@ -70,6 +71,9 @@ function SciMLBase.__init(
     k_interp = VectorOfArray([similar(X, N, ITU.s_star - stage) for _ in 1:Nig])
 
     bcresid_prototype, resid₁_size = __get_bcresid_prototype(prob.problem_type, prob, X)
+
+    # Extract mass matrix for DAE support (defaults to I if not specified)
+    mass_matrix = prob.f.mass_matrix
 
     residual = if iip
         if prob.problem_type isa TwoPointBVProblem
@@ -129,7 +133,7 @@ function SciMLBase.__init(
 
     return MIRKCache{iip, T, use_both, typeof(diffcache), fit_parameters}(
         alg_order(alg), stage, N, size(X), f, bc, prob_, prob.problem_type, prob.p,
-        alg, TU, ITU, bcresid_prototype, mesh, mesh_dt, k_discrete, k_interp, y, y₀,
+        alg, TU, ITU, bcresid_prototype, mass_matrix, mesh, mesh_dt, k_discrete, k_interp, y, y₀,
         residual, fᵢ_cache, fᵢ₂_cache, errors, new_stages, resid₁_size, nlsolve_kwargs,
         optimize_kwargs, (; abstol, dt, adaptive, controller, fit_parameters, kwargs...))
 end

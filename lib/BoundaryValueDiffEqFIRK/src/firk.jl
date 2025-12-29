@@ -13,6 +13,7 @@
     TU                         # FIRK Tableau
     ITU                        # FIRK Interpolation Tableau
     bcresid_prototype
+    mass_matrix                # Mass matrix for DAE support
     # Everything below gets resized in adaptive methods
     mesh                       # Discrete mesh
     mesh_dt                    # Step size
@@ -48,6 +49,7 @@ Base.eltype(::FIRKCacheNested{iip, T}) where {iip, T} = T
     TU                         # FIRK Tableau
     ITU                        # FIRK Interpolation Tableau
     bcresid_prototype
+    mass_matrix                # Mass matrix for DAE support
     # Everything below gets resized in adaptive methods
     mesh                       # Discrete mesh
     mesh_dt                    # Step size
@@ -140,6 +142,9 @@ function init_nested(
 
     bcresid_prototype, resid₁_size = __get_bcresid_prototype(prob.problem_type, prob, X)
 
+    # Extract mass matrix for DAE support (defaults to I if not specified)
+    mass_matrix = prob.f.mass_matrix
+
     residual = if iip
         if prob.problem_type isa TwoPointBVProblem
             vcat([__alloc(__vec(bcresid_prototype))], __alloc.(copy.(@view(y₀.u[2:end]))))
@@ -205,7 +210,7 @@ function init_nested(
 
     return FIRKCacheNested{iip, T, typeof(diffcache), fit_parameters}(
         alg_order(alg), stage, M, size(X), f, bc, prob_, prob.problem_type, prob.p,
-        alg, TU, ITU, bcresid_prototype, mesh, mesh_dt, k_discrete, y, y₀, residual,
+        alg, TU, ITU, bcresid_prototype, mass_matrix, mesh, mesh_dt, k_discrete, y, y₀, residual,
         fᵢ_cache, fᵢ₂_cache, defect, nestprob, resid₁_size, nlsolve_kwargs,
         optimize_kwargs, (; abstol, dt, adaptive, controller, kwargs...))
 end
@@ -249,6 +254,9 @@ function init_expanded(
                   for _ in 1:Nig] # Runtime dispatch
 
     bcresid_prototype, resid₁_size = __get_bcresid_prototype(prob.problem_type, prob, X)
+
+    # Extract mass matrix for DAE support (defaults to I if not specified)
+    mass_matrix = prob.f.mass_matrix
 
     residual = if iip
         if prob.problem_type isa TwoPointBVProblem
@@ -304,7 +312,7 @@ function init_expanded(
 
     return FIRKCacheExpand{iip, T, typeof(diffcache), fit_parameters}(
         alg_order(alg), stage, M, size(X), f, bc, prob_, prob.problem_type,
-        prob.p, alg, TU, ITU, bcresid_prototype, mesh, mesh_dt, k_discrete, y,
+        prob.p, alg, TU, ITU, bcresid_prototype, mass_matrix, mesh, mesh_dt, k_discrete, y,
         y₀, residual, fᵢ_cache, fᵢ₂_cache, defect, resid₁_size, nlsolve_kwargs,
         optimize_kwargs, (; abstol, dt, adaptive, controller, kwargs...))
 end

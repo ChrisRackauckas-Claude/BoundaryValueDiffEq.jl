@@ -1,15 +1,30 @@
+# Helper function to apply mass matrix to residual
+# For identity matrix (I), this is a no-op
+# For other matrices, we compute M * x and store in x
+@inline function __apply_mass_matrix!(residᵢ, mass_matrix::UniformScaling, tmp)
+    # Identity matrix - no modification needed
+    return nothing
+end
+
+@inline function __apply_mass_matrix!(residᵢ, mass_matrix::AbstractMatrix, tmp)
+    # Apply M * residᵢ, using tmp as workspace
+    mul!(tmp, mass_matrix, residᵢ)
+    copyto!(residᵢ, tmp)
+    return nothing
+end
+
 function Φ!(residual, cache::FIRKCacheExpand, y, u, trait)
     return Φ!(residual, cache.fᵢ_cache, cache.k_discrete, cache.f, cache.TU,
-        y, u, cache.p, cache.mesh, cache.mesh_dt, cache.stage, trait)
+        y, u, cache.p, cache.mesh, cache.mesh_dt, cache.stage, cache.mass_matrix, trait)
 end
 
 function Φ!(residual, cache::FIRKCacheNested, y, u, trait)
     return Φ!(residual, cache.fᵢ_cache, cache.k_discrete, cache.f, cache.TU, y,
-        u, cache.p, cache.mesh, cache.mesh_dt, cache.stage, cache, trait)
+        u, cache.p, cache.mesh, cache.mesh_dt, cache.stage, cache.mass_matrix, cache, trait)
 end
 
 @views function Φ!(residual, fᵢ_cache, k_discrete, f!, TU::FIRKTableau{false},
-        y, u, p, mesh, mesh_dt, stage::Int, ::DiffCacheNeeded)
+        y, u, p, mesh, mesh_dt, stage::Int, mass_matrix, ::DiffCacheNeeded)
     (; c, a, b) = TU
     tmp1 = get_tmp(fᵢ_cache, u)
     K = get_tmp(k_discrete[1], u) # Not optimal # TODO
@@ -34,16 +49,17 @@ end
             residual[ctr + r] .-= K[:, r]
         end
 
-        # Update mesh point residual
+        # Update mesh point residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         residᵢ = residual[ctr]
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp1)
         __maybe_matmul!(residᵢ, K, b, -h, T(1))
         ctr += stage + 1
     end
 end
 
 @views function Φ!(residual, fᵢ_cache, k_discrete, f!, TU::FIRKTableau{false},
-        y, u, p, mesh, mesh_dt, stage::Int, ::NoDiffCacheNeeded)
+        y, u, p, mesh, mesh_dt, stage::Int, mass_matrix, ::NoDiffCacheNeeded)
     (; c, a, b) = TU
     tmp1 = similar(fᵢ_cache)
     K = similar(k_discrete[1])
@@ -68,9 +84,10 @@ end
             residual[ctr + r] .-= K[:, r]
         end
 
-        # Update mesh point residual
+        # Update mesh point residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         residᵢ = residual[ctr]
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp1)
         __maybe_matmul!(residᵢ, K, b, -h, T(1))
         ctr += stage + 1
     end
@@ -115,11 +132,12 @@ function FIRK_nlsolve(K, p_nlsolve, f!, TU::FIRKTableau{true}, p_f!)
 end
 
 @views function Φ!(residual, fᵢ_cache, k_discrete, f!, TU::FIRKTableau{true}, y,
-        u, p, mesh, mesh_dt, stage::Int, cache, ::DiffCacheNeeded)
+        u, p, mesh, mesh_dt, stage::Int, mass_matrix, cache, ::DiffCacheNeeded)
     (; b) = TU
     (; nest_prob, alg) = cache
 
     T = eltype(u)
+    tmp1 = get_tmp(fᵢ_cache, u)
     nestprob_p = vcat(T(mesh[1]), T(mesh_dt[1]), get_tmp(y[1], u))
     nest_nlsolve_alg = __concrete_solve_algorithm(nest_prob, alg.nlsolve)
 
@@ -139,17 +157,20 @@ end
         _nestprob = remake(nest_prob, p = nestprob_p)
         nestsol = __solve(_nestprob, nest_nlsolve_alg; alg.nested_nlsolve_kwargs...)
         @. K = nestsol.u
+        # Update residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp1)
         __maybe_matmul!(residᵢ, nestsol.u, b, -h, T(1))
     end
 end
 
 @views function Φ!(residual, fᵢ_cache, k_discrete, f!, TU::FIRKTableau{true}, y,
-        u, p, mesh, mesh_dt, stage::Int, cache, ::NoDiffCacheNeeded)
+        u, p, mesh, mesh_dt, stage::Int, mass_matrix, cache, ::NoDiffCacheNeeded)
     (; b) = TU
     (; nest_prob, alg) = cache
 
     T = eltype(u)
+    tmp1 = similar(fᵢ_cache)
     nestprob_p = vcat(T(mesh[1]), T(mesh_dt[1]), y[1])
     nest_nlsolve_alg = __concrete_solve_algorithm(nest_prob, cache.alg.nlsolve)
 
@@ -169,23 +190,25 @@ end
         _nestprob = remake(nest_prob, p = nestprob_p)
         nestsol = solve(_nestprob, nest_nlsolve_alg; alg.nested_nlsolve_kwargs...)
         @. K = nestsol.u
+        # Update residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp1)
         __maybe_matmul!(residᵢ, nestsol.u, b, -h, T(1))
     end
 end
 
 function Φ(cache::FIRKCacheExpand, y, u, trait)
     return Φ(cache.fᵢ_cache, cache.k_discrete, cache.f, cache.TU, y, u,
-        cache.p, cache.mesh, cache.mesh_dt, cache.stage, trait)
+        cache.p, cache.mesh, cache.mesh_dt, cache.stage, cache.mass_matrix, trait)
 end
 
 function Φ(cache::FIRKCacheNested, y, u, trait)
     return Φ(cache.fᵢ_cache, cache.k_discrete, cache.f, cache.TU, y, u,
-        cache.p, cache.mesh, cache.mesh_dt, cache.stage, cache, trait)
+        cache.p, cache.mesh, cache.mesh_dt, cache.stage, cache.mass_matrix, cache, trait)
 end
 
 @views function Φ(fᵢ_cache, k_discrete, f, TU::FIRKTableau{false}, y,
-        u, p, mesh, mesh_dt, stage::Int, ::DiffCacheNeeded)
+        u, p, mesh, mesh_dt, stage::Int, mass_matrix, ::DiffCacheNeeded)
     (; c, a, b) = TU
     residuals = [safe_similar(yᵢ) for yᵢ in y[1:(end - 1)]]
     tmp1 = get_tmp(fᵢ_cache, u)
@@ -211,9 +234,10 @@ end
             residuals[ctr + r] .-= K[:, r]
         end
 
-        # Update mesh point residual
+        # Update mesh point residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         residᵢ = residuals[ctr]
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp1)
         __maybe_matmul!(residᵢ, K, b, -h, T(1))
         ctr += stage + 1
     end
@@ -221,7 +245,7 @@ end
 end
 
 @views function Φ(fᵢ_cache, k_discrete, f, TU::FIRKTableau{false}, y,
-        u, p, mesh, mesh_dt, stage::Int, ::NoDiffCacheNeeded)
+        u, p, mesh, mesh_dt, stage::Int, mass_matrix, ::NoDiffCacheNeeded)
     (; c, a, b) = TU
     residuals = [safe_similar(yᵢ) for yᵢ in y[1:(end - 1)]]
     tmp1 = similar(fᵢ_cache)
@@ -247,9 +271,10 @@ end
             residuals[ctr + r] .-= K[:, r]
         end
 
-        # Update mesh point residual
+        # Update mesh point residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         residᵢ = residuals[ctr]
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp1)
         __maybe_matmul!(residᵢ, K, b, -h, T(1))
         ctr += stage + 1
     end
@@ -257,13 +282,14 @@ end
 end
 
 @views function Φ(fᵢ_cache, k_discrete, f!, TU::FIRKTableau{true}, y, u,
-        p, mesh, mesh_dt, stage::Int, cache, ::DiffCacheNeeded)
+        p, mesh, mesh_dt, stage::Int, mass_matrix, cache, ::DiffCacheNeeded)
     (; b) = TU
     (; nest_prob, alg) = cache
 
     residuals = [safe_similar(yᵢ) for yᵢ in y[1:(end - 1)]]
 
     T = eltype(u)
+    tmp1 = get_tmp(fᵢ_cache, u)
     nestprob_p = vcat(T(mesh[1]), T(mesh_dt[1]), get_tmp(y[1], u))
     nest_nlsolve_alg = __concrete_solve_algorithm(nest_prob, alg.nlsolve)
 
@@ -281,20 +307,23 @@ end
         _nestprob = remake(nest_prob, p = nestprob_p)
         nestsol = __solve(_nestprob, nest_nlsolve_alg; alg.nested_nlsolve_kwargs...)
 
+        # Update residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp1)
         __maybe_matmul!(residᵢ, nestsol.u, b, -h, T(1))
     end
     return residuals
 end
 
 @views function Φ(fᵢ_cache, k_discrete, f!, TU::FIRKTableau{true}, y, u, p,
-        mesh, mesh_dt, stage::Int, cache, ::NoDiffCacheNeeded)
+        mesh, mesh_dt, stage::Int, mass_matrix, cache, ::NoDiffCacheNeeded)
     (; b) = TU
     (; nest_prob, alg) = cache
 
     residuals = [safe_similar(yᵢ) for yᵢ in y[1:(end - 1)]]
 
     T = eltype(u)
+    tmp1 = similar(fᵢ_cache)
     nestprob_p = vcat(T(mesh[1]), T(mesh_dt[1]), y[1])
     nest_nlsolve_alg = __concrete_solve_algorithm(nest_prob, alg.nlsolve)
 
@@ -312,7 +341,9 @@ end
         _nestprob = remake(nest_prob, p = nestprob_p)
         nestsol = solve(_nestprob, nest_nlsolve_alg; alg.nested_nlsolve_kwargs...)
 
+        # Update residual: M * (yᵢ₊₁ - yᵢ) - h * K * b = 0
         @. residᵢ = yᵢ₊₁ - yᵢ
+        __apply_mass_matrix!(residᵢ, mass_matrix, tmp1)
         __maybe_matmul!(residᵢ, nestsol.u, b, -h, T(1))
     end
     return residuals
