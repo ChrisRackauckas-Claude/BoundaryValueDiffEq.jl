@@ -794,7 +794,8 @@ end
 @views function __firk_loss!(resid, u, p, y, pt::StandardBVProblem, bc!::BC, residual,
         mesh, cache, eval_sol, trait::NoDiffCacheNeeded) where {BC}
     y_ = recursive_unflatten!(y, u)
-    resids = [r for r in residual]
+    # Use view to avoid allocating a new array (residual is already a view due to @views)
+    resids = residual
     Φ!(resids[2:end], cache, y_, u, trait)
     eval_sol.u[1:end] .= y_
     eval_bc_residual!(resids[1], pt, bc!, eval_sol, p, mesh)
@@ -888,7 +889,8 @@ end
 @views function __firk_loss_collocation!(
         resid, u, p, y, mesh, residual, cache, trait::NoDiffCacheNeeded)
     y_ = recursive_unflatten!(y, u)
-    resids = [r for r in residual[2:end]]
+    # Use view to avoid allocating a new array (residual[2:end] is already a view due to @views)
+    resids = residual[2:end]
     Φ!(resids, cache, y_, u, trait)
     recursive_flatten!(resid, resids)
     return nothing
