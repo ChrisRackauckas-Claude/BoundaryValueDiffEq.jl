@@ -890,7 +890,7 @@ end
         resid, u, p, y, mesh, residual, cache, trait::NoDiffCacheNeeded)
     y_ = recursive_unflatten!(y, u)
     # Use view to avoid allocating a new array (residual[2:end] is already a view due to @views)
-    resids = residual[2:end]
+    resids = @view residual[2:end]
     Φ!(resids, cache, y_, u, trait)
     recursive_flatten!(resid, resids)
     return nothing
