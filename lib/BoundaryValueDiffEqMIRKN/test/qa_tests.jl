@@ -1,5 +1,6 @@
-@testitem "Quality Assurance" tags = [:qa] begin
-    using Aqua
+using BoundaryValueDiffEqMIRKN, Test
+using Aqua
 
+@testset "Quality Assurance" begin
     Aqua.test_all(BoundaryValueDiffEqMIRKN)
 end

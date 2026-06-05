@@ -1,31 +1,23 @@
-using ReTestItems, BoundaryValueDiffEqMIRKN, Hwloc, InteractiveUtils
+using SafeTestsets, InteractiveUtils
 
 @info sprint(InteractiveUtils.versioninfo)
 
 # Standard sublibrary test groups (Core / QA). The root test/runtests.jl
 # activates this sublibrary and sets BVDE_TEST_GROUP to the standard group name.
-# Core (and All) run every test item; QA runs the :qa-tagged Aqua tests.
+# Core (and All) run the functional tests plus the Aqua quality checks, matching
+# the previous ReTestItems behavior where the Core leg ran every test item
+# (including the :qa-tagged Aqua item). QA runs only the Aqua checks.
 const GROUP = get(ENV, "BVDE_TEST_GROUP", "All")
-const TEST_TAGS = GROUP in ("All", "Core") ? nothing : [Symbol(lowercase(GROUP))]
 
-const RETESTITEMS_NWORKERS = parse(
-    Int,
-    get(
-        ENV, "RETESTITEMS_NWORKERS",
-        string(min(ifelse(Sys.iswindows(), 0, Hwloc.num_physical_cores()), 4))
-    )
-)
-const RETESTITEMS_NWORKER_THREADS = parse(
-    Int,
-    get(
-        ENV, "RETESTITEMS_NWORKER_THREADS",
-        string(max(Hwloc.num_virtual_cores() ÷ max(RETESTITEMS_NWORKERS, 1), 1))
-    )
-)
+@info "Running tests for group: $(GROUP)"
 
-@info "Running tests for group: $(GROUP) with $(RETESTITEMS_NWORKERS) workers"
+if GROUP in ("Core", "All")
+    @time @safetestset "Convergence on Linear" include("mirkn_convergence_tests.jl")
+    @time @safetestset "Example problem from paper" include("mirkn_example_paper_tests.jl")
+    @time @safetestset "Test initial guess" include("mirkn_initial_guess_tests.jl")
+end
 
-ReTestItems.runtests(
-    BoundaryValueDiffEqMIRKN; tags = TEST_TAGS,
-    nworkers = RETESTITEMS_NWORKERS, nworker_threads = RETESTITEMS_NWORKER_THREADS
-)
+# Aqua runs in Core/All (the old Core leg ran the :qa item) and in QA.
+if GROUP in ("Core", "QA", "All")
+    @time @safetestset "Quality Assurance" include("qa_tests.jl")
+end
