@@ -6,7 +6,7 @@ using BandedMatrices: BandedMatrix, Ones
 using BoundaryValueDiffEqCore: BoundaryValueDiffEqCore,
     AbstractBoundaryValueDiffEqAlgorithm,
     AbstractBoundaryValueDiffEqCache, BVPJacobianAlgorithm,
-    DEFAULT_VERBOSE, DefectControl, GaussNewton, LevenbergMarquardt,
+    DEFAULT_VERBOSE, DefectControl,
     _process_verbose_param,
     recursive_flatten!, recursive_unflatten!,
     __concrete_solve_algorithm, diff!, EvalSol,
@@ -34,9 +34,9 @@ using FastAlmostBandedMatrices: AlmostBandedMatrix, fillpart, exclusive_bandpart
 using FastClosures: @closure
 using ForwardDiff: ForwardDiff, pickchunksize
 using LinearAlgebra: LinearAlgebra
+using NonlinearSolveFirstOrder: GaussNewton, LevenbergMarquardt
 using RecursiveArrayTools: AbstractVectorOfArray, DiffEqArray,
     VectorOfArray, recursivecopy, recursivefill!
-using Reexport: @reexport
 using PreallocationTools: PreallocationTools, DiffCache, get_tmp
 using PrecompileTools: @compile_workload, @setup_workload
 using Preferences: Preferences
@@ -49,8 +49,6 @@ using SciMLStructures: SciMLStructures
 using StaticArrays: SMatrix, SVector
 
 const DI = DifferentiationInterface
-
-@reexport using ADTypes, BoundaryValueDiffEqCore, SciMLBase
 
 include("types.jl")
 include("utils.jl")
@@ -310,5 +308,6 @@ export RadauIIa1, RadauIIa2, RadauIIa3, RadauIIa5, RadauIIa7
 export LobattoIIIa2, LobattoIIIa3, LobattoIIIa4, LobattoIIIa5
 export LobattoIIIb2, LobattoIIIb3, LobattoIIIb4, LobattoIIIb5
 export LobattoIIIc2, LobattoIIIc3, LobattoIIIc4, LobattoIIIc5
+export BVProblem, TwoPointBVProblem, solve
 
 end

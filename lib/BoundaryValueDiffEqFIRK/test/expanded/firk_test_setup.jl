@@ -2,6 +2,8 @@
 # tests. Included by firk_basic_tests.jl, firk_affineness_tests.jl and
 # firk_convergence_tests.jl, which run as separate test groups.
 
+using SciMLBase: BVProblem, ODEFunction, TwoPointBVProblem, solve
+
 nested = false
 
 for stage in (2, 3, 4, 5)

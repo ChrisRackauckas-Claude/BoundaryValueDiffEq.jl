@@ -3,6 +3,7 @@
 # firk_convergence_tests.jl and firk_pendulum_tests.jl, which run as separate
 # test groups.
 
+using SciMLBase: BVProblem, ODEFunction, TwoPointBVProblem, solve
 
 nested = true
 
