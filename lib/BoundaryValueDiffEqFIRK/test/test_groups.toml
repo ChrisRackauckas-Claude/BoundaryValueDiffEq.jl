@@ -10,6 +10,10 @@
 # the EXPANDED and NESTED matrix groups, so adding a "Core" matrix entry would
 # only duplicate them across the full version matrix.
 
+[PUBLIC_FACADE]
+versions = ["lts", "1", "pre"]
+timeout = 30
+
 # The expanded formulation is split across five groups. Almost all of its runtime is
 # Julia compilation -- each (problem, solver) pair specializes the whole FIRK ->
 # NonlinearSolve -> AD stack from scratch at roughly 20 s -- and the Affineness and

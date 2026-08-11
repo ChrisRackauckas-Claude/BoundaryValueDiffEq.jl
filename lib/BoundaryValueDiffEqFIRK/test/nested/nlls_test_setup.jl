@@ -2,6 +2,8 @@
 # nlls_tests.jl and nlls_underconstrained_tests.jl, which run as separate test groups.
 
 using BoundaryValueDiffEqFIRK
+using NonlinearSolveFirstOrder: GaussNewton, NewtonRaphson, TrustRegion
+using SciMLBase: BVPFunction, BVProblem, TwoPointBVProblem
 using Test
 
 using BoundaryValueDiffEqFIRK, LinearAlgebra

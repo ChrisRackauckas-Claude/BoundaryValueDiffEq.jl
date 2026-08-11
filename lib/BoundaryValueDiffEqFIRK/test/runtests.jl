@@ -8,10 +8,14 @@ run_tests(;
     # already include these basic tests, and "All" runs those groups, so "Core" is
     # kept out of "All" (see the `all` list below) to avoid double execution.
     core = function ()
+        @time @safetestset "FIRK Public Facade Tests" include("public_facade_tests.jl")
         @time @safetestset "FIRK Expanded Basic Tests" include("expanded/firk_basic_tests.jl")
         return @time @safetestset "FIRK Nested Basic Tests" include("nested/firk_basic_tests.jl")
     end,
     groups = Dict(
+        "PUBLIC_FACADE" => function ()
+            return @time @safetestset "FIRK Public Facade Tests" include("public_facade_tests.jl")
+        end,
         # The expanded formulation is split across several matrix groups. Nearly all of
         # its wall time is Julia compilation: every (problem, solver) pair specializes
         # the whole FIRK -> NonlinearSolve -> AD stack afresh at ~20 s a piece, and the
@@ -110,7 +114,7 @@ run_tests(;
     # aggregate "EXPANDED"/"NESTED" groups are intentionally excluded: all three only
     # re-run tests that the listed groups already cover.
     all = [
-        "EXPANDED_BASIC", "EXPANDED_AFFINENESS", "EXPANDED_CONVERGENCE",
+        "PUBLIC_FACADE", "EXPANDED_BASIC", "EXPANDED_AFFINENESS", "EXPANDED_CONVERGENCE",
         "EXPANDED_NLLS", "EXPANDED_MISC",
         "NESTED_BASIC", "NESTED_AFFINENESS", "NESTED_CONVERGENCE",
         "NESTED_PENDULUM", "NESTED_NLLS", "NESTED_NLLS_UNDERCONSTRAINED", "NESTED_MISC",

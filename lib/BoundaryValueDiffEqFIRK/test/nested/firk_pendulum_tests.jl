@@ -1,4 +1,8 @@
 using BoundaryValueDiffEqFIRK
+using ADTypes: AutoFiniteDiff, AutoSparse
+using BoundaryValueDiffEqCore: BVPJacobianAlgorithm
+using NonlinearSolveFirstOrder: NewtonRaphson
+using SciMLBase: BVProblem, solve
 using Test
 
 include("firk_test_setup.jl")
