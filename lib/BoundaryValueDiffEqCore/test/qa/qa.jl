@@ -2,7 +2,6 @@ using SciMLTesting
 using BoundaryValueDiffEqCore
 using Test
 
-const DOCS_SRC = normpath(joinpath(@__DIR__, "..", "..", "..", "..", "docs", "src"))
 include(joinpath(@__DIR__, "..", "..", "..", "..", "test", "qa", "reexports.jl"))
 
 run_qa(
@@ -37,8 +36,4 @@ run_qa(
         ),
     ),
     reexports_allow = CORE_REEXPORTS,
-    api_docs_kwargs = (;
-        docs_src = DOCS_SRC, ignore = CORE_REEXPORTS,
-        rendered_ignore = CORE_REEXPORTS,
-    ),
 )

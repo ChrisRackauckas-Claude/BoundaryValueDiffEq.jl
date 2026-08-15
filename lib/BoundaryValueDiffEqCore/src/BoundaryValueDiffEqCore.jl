@@ -33,7 +33,48 @@ using SparseConnectivityTracer: SparseConnectivityTracer, TracerLocalSparsityDet
 using SparseMatrixColorings: GreedyColoringAlgorithm
 using SciMLStructures: SciMLStructures
 
-@reexport using NonlinearSolveFirstOrder, SciMLBase
+@reexport using NonlinearSolveFirstOrder:
+    AbsNormSafeBestTerminationMode, AbsNormSafeTerminationMode, AbsNormTerminationMode,
+    AbsTerminationMode, AbstractAnalyticalProblem, AnalyticalProblem, ArcLengthContinuation,
+    BVPFunction, BVProblem, BatchIntegralFunction, CallbackSet, CheckInit, Clocks,
+    ContinuousCallback, ConvexOptimizationProblem, DAEFunction, DAEProblem, DAESolution,
+    DDEFunction, DDEProblem, DampedNewtonDescent, DescentResult, DiscreteCallback,
+    DiscreteFunction, DiscreteProblem, Dogleg, DynamicalBVPFunction, DynamicalDDEFunction,
+    DynamicalDDEProblem, DynamicalODEFunction, DynamicalODEProblem, DynamicalSDEFunction,
+    DynamicalSDEProblem, EigenvalueProblem, EigenvalueSolution, EigenvalueTarget,
+    EisenstatWalkerForcing2, EnsembleAnalysis, EnsembleContext, EnsembleDistributed,
+    EnsembleProblem, EnsembleSerial, EnsembleSolution, EnsembleSplitThreads, EnsembleSummary,
+    EnsembleTestSolution, EnsembleThreads, FastShortcutNLLSPolyalg, GaussNewton,
+    GeneralizedFirstOrderAlgorithm, GeodesicAcceleration, HomotopyNonlinearFunction,
+    HomotopyPolyAlgorithm, HomotopyProblem, HomotopySweep, ImplicitDiscreteFunction,
+    ImplicitDiscreteProblem, IncrementingODEFunction, IncrementingODEProblem, IntegralFunction,
+    IntegralProblem, IntegralSolution, IntervalNonlinearFunction, IntervalNonlinearProblem,
+    KantorovichHomotopy, LevenbergMarquardt, LinearAliasSpecifier, LinearProblem, LinearSolution,
+    MultiObjectiveOptimizationFunction, NewtonDescent, NewtonRaphson, NoiseProblem,
+    NonlinearFunction, NonlinearLeastSquaresProblem, NonlinearProblem, NonlinearSolution,
+    NonlinearSolveBase, NonlinearSolveFirstOrder, NonlinearSolvePolyAlgorithm,
+    NonlinearVerbosity, NormTerminationMode, ODEAliasSpecifier, ODEFunction, ODEInputFunction,
+    ODEProblem, ODESolution, OptimizationFunction, OptimizationProblem, OptimizationSolution,
+    PDENoTimeSolution, PDEProblem, PDETimeSeriesSolution, PostconditionSpace,
+    PostconditionSpecifier, PseudoTransient, RODEFunction, RODEProblem, RODESolution,
+    RadiusUpdateSchemes, RelNormSafeBestTerminationMode, RelNormSafeTerminationMode,
+    RelNormTerminationMode, RelTerminationMode, ReturnCode, RobustMultiNewton,
+    SCCNonlinearProblem, SDDEFunction, SDDEProblem, SDEFunction, SDEProblem,
+    SampledIntegralProblem, SciMLBase, SecondOrderBVProblem, SecondOrderDDEProblem,
+    SecondOrderODEProblem, SplitFunction, SplitODEProblem, SplitSDEFunction, SplitSDEProblem,
+    SteadyStateProblem, SteadyStateSolution, SteepestDescent, TimeDomain, TraceAll, TraceMinimal,
+    TraceWithJacobianConditionNumber, TrustRegion, TwoPointBVPFunction, TwoPointBVProblem,
+    TwoPointDynamicalBVPFunction, TwoPointSecondOrderBVProblem, VectorContinuousCallback,
+    add_saveat!, add_tstop!, addat!, addat_non_user_cache!, addsteps!, auto_dt_reset!,
+    change_t_via_interpolation!, check_error, check_keywords, deleteat_non_user_cache!,
+    derivative_discontinuity!, discretize, du_cache, first_tstop, full_cache, get_dt, get_du,
+    get_du!, get_proposed_dt, get_rng, get_tmp_cache, has_rng, has_tstop, init,
+    is_discrete_time_domain, isclock, iscontinuous, isdiscrete, isinplace, issolverstepclock,
+    pop_tstop!, rand_cache, ratenoise_cache, reeval_internals_due_to_modification!, reinit!,
+    remake, resize_non_user_cache!, savevalues!, set_abstol!, set_proposed_dt!, set_reltol!,
+    set_rng!, set_t!, set_u!, solve, solve!, step!, supports_solve_rng, symbolic_discretize,
+    terminate!, u_cache, u_modified!, user_cache, warn_compat
+@reexport using SciMLBase
 
 include("verbosity.jl")
 include("types.jl")

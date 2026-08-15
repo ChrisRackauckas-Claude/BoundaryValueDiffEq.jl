@@ -18,7 +18,6 @@ run_qa(
         piracies = (; treat_as_own = [SciMLBase.BVProblem]),
     ),
     reexports_allow = ROOT_REEXPORTS,
-    api_docs_kwargs = (; ignore = ROOT_OWNER_DOCUMENTED, rendered_ignore = ROOT_OWNER_DOCUMENTED),
     ei_kwargs = (;
         all_qualified_accesses_are_public = (;
             ignore = (
