@@ -16,7 +16,7 @@ run_qa(
         #     legitimately subtype/extend, and solution_new_original_retcode (no
         #     public counterpart; solution_new_retcode does not preserve the
         #     original retcode).
-        #   - ForwardDiff Dual/value/can_dual/pickchunksize: not marked public.
+        #   - ForwardDiff Dual/value/can_dual: not marked public.
         #   - ArrayInterface.parameterless_type: not marked public.
         #   - SciMLStructures Tunable/canonicalize/isscimlstructure/replace: the
         #     SciMLStructures interface is not marked public.
@@ -24,7 +24,7 @@ run_qa(
         all_explicit_imports_are_public = (;
             ignore = (
                 :AbstractBVProblem, :StandardBVProblem, :StandardSecondOrderBVProblem,
-                :parameterless_type, :pickchunksize,
+                :parameterless_type,
             ),
         ),
         all_qualified_accesses_are_public = (;

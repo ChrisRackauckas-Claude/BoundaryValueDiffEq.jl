@@ -7,9 +7,8 @@ run_qa(
     ei_kwargs = (;
         # External internals with no public replacement:
         #   - StandardBVProblem: SciMLBase-owned problem type, not public.
-        #   - pickchunksize: ForwardDiff internal.
         all_explicit_imports_are_public = (;
-            ignore = (:StandardBVProblem, :pickchunksize),
+            ignore = (:StandardBVProblem,),
         ),
         # SciMLStructures interface (Tunable/canonicalize/isscimlstructure) is not
         # marked public.

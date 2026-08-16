@@ -13,7 +13,7 @@ using BoundaryValueDiffEqCore: BoundaryValueDiffEqCore,
     concrete_jacobian_algorithm, eval_bc_residual, interval,
     eval_bc_residual!, __maybe_matmul!, __resize!,
     __extract_problem_details, nodual_value,
-    __maybe_allocate_diffcache, __restructure_sol,
+    __maybe_allocate_diffcache, __pickchunksize, __restructure_sol,
     __get_bcresid_prototype, __vec, __vec_f, __vec_f!, __vec_bc,
     __vec_bc!, recursive_flatten_twopoint!, __concrete_kwargs,
     __extract_mesh,
@@ -32,7 +32,7 @@ using DifferentiationInterface: DifferentiationInterface, Constant
 using FastAlmostBandedMatrices: AlmostBandedMatrix, fillpart, exclusive_bandpart,
     finish_part_setindex!
 using FastClosures: @closure
-using ForwardDiff: ForwardDiff, pickchunksize
+using ForwardDiff: ForwardDiff
 using LinearAlgebra: LinearAlgebra
 using NonlinearSolveFirstOrder: GaussNewton, LevenbergMarquardt
 using RecursiveArrayTools: AbstractVectorOfArray, DiffEqArray,

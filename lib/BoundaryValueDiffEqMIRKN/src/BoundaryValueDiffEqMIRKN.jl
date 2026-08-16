@@ -9,7 +9,7 @@ using BoundaryValueDiffEqCore: BoundaryValueDiffEqCore,
     __concrete_solve_algorithm, EvalSol, eval_bc_residual,
     eval_bc_residual!, __maybe_matmul!,
     __extract_problem_details,
-    __maybe_allocate_diffcache, __restructure_sol,
+    __maybe_allocate_diffcache, __pickchunksize, __restructure_sol,
     safe_similar, __vec_f,
     __vec_f!, __vec_so_bc!, __vec_so_bc,
     __extract_mesh,
@@ -24,7 +24,7 @@ using BoundaryValueDiffEqCore: BoundaryValueDiffEqCore,
 using ConcreteStructs: @concrete
 using DifferentiationInterface: DifferentiationInterface, Constant
 using FastClosures: @closure
-using ForwardDiff: ForwardDiff, pickchunksize
+using ForwardDiff: ForwardDiff
 using LinearAlgebra: LinearAlgebra
 using PreallocationTools: PreallocationTools, get_tmp
 using Preferences: Preferences

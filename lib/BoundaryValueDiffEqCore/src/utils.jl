@@ -301,11 +301,41 @@ end
 __resize!(::Nothing, n, _) = nothing
 __resize!(::Nothing, n, _, _) = nothing
 
+"""
+    __pickchunksize(input_length, threshold = 12)
+
+Choose a chunk size for forward-mode differentiation while keeping the chunk
+size at or below `threshold`. This is a versioned developer interface used by
+the solver subpackages when allocating `DiffCache` values.
+
+# Arguments
+
+- `input_length`: Number of derivative directions to process.
+- `threshold`: Maximum chunk size considered by the selection rule.
+
+# Examples
+
+```jldoctest
+julia> import BoundaryValueDiffEqCore: __pickchunksize
+
+julia> __pickchunksize(8)
+8
+
+julia> __pickchunksize(25)
+9
+```
+"""
+function __pickchunksize(input_length, threshold = 12)
+    input_length <= threshold && return input_length
+    nchunks = round(Int, input_length / threshold, RoundUp)
+    return round(Int, input_length / nchunks, RoundUp)
+end
+
 function __resize!(x::AbstractVector{<:DiffCache}, n, M)
     N = n - length(x)
     N == 0 && return x
     if N > 0
-        chunksize = pickchunksize(M * (N + length(x)))
+        chunksize = __pickchunksize(M * (N + length(x)))
         append!(x, [__maybe_allocate_diffcache(last(x), chunksize) for _ in 1:N])
     else
         resize!(x, n)

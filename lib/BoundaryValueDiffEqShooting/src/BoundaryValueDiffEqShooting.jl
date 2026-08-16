@@ -12,7 +12,7 @@ using BoundaryValueDiffEqCore: BoundaryValueDiffEqCore,
     __concrete_kwargs, __extract_problem_details,
     __construct_internal_problem,
     __default_coloring_algorithm,
-    __maybe_allocate_diffcache, __get_bcresid_prototype,
+    __maybe_allocate_diffcache, __get_bcresid_prototype, __pickchunksize,
     __vec,
     __materialize_jacobian_algorithm, __default_nonsparse_ad,
     NoDiffCacheNeeded, DiffCacheNeeded,
@@ -25,7 +25,7 @@ using ConcreteStructs: @concrete
 using DifferentiationInterface: DifferentiationInterface,
     overloaded_input_type
 using FastClosures: @closure
-using ForwardDiff: ForwardDiff, pickchunksize
+using ForwardDiff: ForwardDiff
 using LinearAlgebra: LinearAlgebra
 using SciMLBase: SciMLBase, BVProblem, EnsembleSerial, EnsembleThreads,
     NonlinearFunction, ODEProblem, StandardBVProblem, TwoPointBVProblem,

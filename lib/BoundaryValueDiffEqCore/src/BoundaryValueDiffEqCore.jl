@@ -7,7 +7,7 @@ using ArrayInterface: parameterless_type
 using ConcreteStructs: @concrete
 using DiffEqBase: DiffEqBase, solve
 using DifferentiationInterface: SecondOrder
-using ForwardDiff: ForwardDiff, pickchunksize
+using ForwardDiff: ForwardDiff
 using Integrals: Integrals, IntegralProblem
 using LinearAlgebra: LinearAlgebra, mul!
 using LineSearch: BackTracking
@@ -84,6 +84,7 @@ export BVPVerbosity, _process_verbose_param, DEFAULT_VERBOSE
     __initial_guess_on_mesh, __internal_nlsolve_problem,
     __internal_optimization_problem, __internal_solve,
     __materialize_jacobian_algorithm, __maybe_allocate_diffcache, __maybe_matmul!,
+    __pickchunksize,
     __needs_diffcache, __resize!, __restructure_sol, __split_kwargs,
     __tunable_part, __use_both_error_control, __vec, __vec_bc, __vec_bc!,
     __vec_f, __vec_f!, __vec_so_bc, __vec_so_bc!, _sparse_like,

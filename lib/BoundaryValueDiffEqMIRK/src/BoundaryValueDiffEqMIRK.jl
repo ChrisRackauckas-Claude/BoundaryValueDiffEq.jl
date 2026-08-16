@@ -13,7 +13,7 @@ using BoundaryValueDiffEqCore: BoundaryValueDiffEqCore,
     concrete_jacobian_algorithm, eval_bc_residual,
     eval_bc_residual!, __maybe_matmul!, __resize!,
     __extract_problem_details, interval,
-    __needs_diffcache, __maybe_allocate_diffcache,
+    __needs_diffcache, __maybe_allocate_diffcache, __pickchunksize,
     __restructure_sol, __cache_trait, __get_bcresid_prototype,
     safe_similar, __vec, __vec_f, __vec_f!, __vec_bc, __vec_bc!,
     recursive_flatten_twopoint!,
@@ -33,7 +33,7 @@ using DifferentiationInterface: DifferentiationInterface, Constant
 using FastAlmostBandedMatrices: AlmostBandedMatrix, fillpart, exclusive_bandpart,
     finish_part_setindex!
 using FastClosures: @closure
-using ForwardDiff: ForwardDiff, pickchunksize
+using ForwardDiff: ForwardDiff
 using LinearAlgebra: LinearAlgebra
 using RecursiveArrayTools: AbstractVectorOfArray, DiffEqArray, VectorOfArray, recursivecopy,
     recursivefill!
