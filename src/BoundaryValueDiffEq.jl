@@ -1,6 +1,5 @@
 module BoundaryValueDiffEq
 
-using ADTypes: ADTypes
 using BoundaryValueDiffEqAscher: BoundaryValueDiffEqAscher, Ascher1, Ascher2, Ascher3,
     Ascher4, Ascher5, Ascher6, Ascher7
 using BoundaryValueDiffEqCore: BoundaryValueDiffEqCore,
@@ -19,7 +18,10 @@ using OrdinaryDiffEqTsit5: Tsit5
 using Reexport: @reexport
 using SciMLBase: SciMLBase, BVProblem
 
-@reexport using ADTypes, SciMLBase
+@reexport using ADTypes: AutoEnzyme, AutoFiniteDiff, AutoForwardDiff, AutoMooncake,
+    AutoPolyesterForwardDiff, AutoSparse
+@reexport using SciMLBase: BVPFunction, BVProblem, DynamicalBVPFunction,
+    SecondOrderBVProblem, TwoPointBVProblem, TwoPointSecondOrderBVProblem, init, solve
 
 function SciMLBase.__init(prob::BVProblem; kwargs...)
     return SciMLBase.__init(prob, Shooting(Tsit5()); kwargs...)

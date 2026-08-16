@@ -7,7 +7,6 @@ include(joinpath(@__DIR__, "..", "..", "..", "..", "test", "qa", "reexports.jl")
 run_qa(
     BoundaryValueDiffEqCore;
     aqua_kwargs = (;
-        ambiguities = (; recursive = false),
         stale_deps = (; ignore = [:TimerOutputs]),
     ),
     ei_kwargs = (;
