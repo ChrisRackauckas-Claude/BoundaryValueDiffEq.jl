@@ -74,7 +74,11 @@ using SciMLStructures: SciMLStructures
     remake, resize_non_user_cache!, savevalues!, set_abstol!, set_proposed_dt!, set_reltol!,
     set_rng!, set_t!, set_u!, solve, solve!, step!, supports_solve_rng, symbolic_discretize,
     terminate!, u_cache, u_modified!, user_cache, warn_compat
-@reexport using SciMLBase
+@reexport using SciMLBase:
+    BVPFunction, BVProblem, DynamicalBVPFunction, NonlinearFunction,
+    NonlinearLeastSquaresProblem, NonlinearProblem, OptimizationFunction,
+    OptimizationProblem, ReturnCode, SecondOrderBVProblem, TwoPointBVProblem,
+    TwoPointSecondOrderBVProblem, init, remake, solve
 
 include("verbosity.jl")
 include("types.jl")
