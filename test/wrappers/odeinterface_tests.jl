@@ -1,4 +1,5 @@
 using BoundaryValueDiffEq
+using SciMLBase
 using Test
 
 using BoundaryValueDiffEq, LinearAlgebra, ODEInterface, Random, RecursiveArrayTools
