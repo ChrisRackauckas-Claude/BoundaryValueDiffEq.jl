@@ -24,7 +24,7 @@ using BoundaryValueDiffEqCore: BoundaryValueDiffEqCore,
 using ConcreteStructs: @concrete
 using DifferentiationInterface: DifferentiationInterface, Constant
 using FastClosures: @closure
-using ForwardDiff: ForwardDiff
+using ForwardDiff: ForwardDiff, pickchunksize
 using LinearAlgebra: LinearAlgebra
 using PreallocationTools: PreallocationTools, get_tmp
 using Preferences: Preferences

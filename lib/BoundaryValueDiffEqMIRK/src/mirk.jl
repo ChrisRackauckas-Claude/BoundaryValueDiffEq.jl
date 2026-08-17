@@ -76,7 +76,7 @@ function SciMLBase.__init(
     mesh = __extract_mesh(prob.u0, t₀, t₁, Nig)
     mesh_dt = diff(mesh)
 
-    chunksize = BoundaryValueDiffEqCore.__pickchunksize(N * (Nig - 1))
+    chunksize = pickchunksize(N * (Nig - 1))
     __alloc = @closure x -> __maybe_allocate_diffcache(vec(zero(x)), chunksize, alg.jac_alg)
 
     fᵢ_cache = __alloc(zero(u0))

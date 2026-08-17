@@ -212,8 +212,7 @@ function __solve_nlproblem!(
 
     __resid_nodes = resid_prototype[(end - cur_nshoot * N + 1):end]
     resid_nodes = __maybe_allocate_diffcache(
-        __resid_nodes, BoundaryValueDiffEqCore.__pickchunksize((cur_nshoot + 1) * N),
-        alg.jac_alg.bc_diffmode
+        __resid_nodes, pickchunksize((cur_nshoot + 1) * N), alg.jac_alg.bc_diffmode
     )
 
     loss_fn = @closure (

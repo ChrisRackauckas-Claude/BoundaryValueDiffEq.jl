@@ -33,7 +33,7 @@ using DifferentiationInterface: DifferentiationInterface, Constant
 using FastAlmostBandedMatrices: AlmostBandedMatrix, fillpart, exclusive_bandpart,
     finish_part_setindex!
 using FastClosures: @closure
-using ForwardDiff: ForwardDiff
+using ForwardDiff: ForwardDiff, pickchunksize
 using LinearAlgebra: LinearAlgebra
 using RecursiveArrayTools: AbstractVectorOfArray, DiffEqArray, VectorOfArray, recursivecopy,
     recursivefill!

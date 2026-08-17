@@ -25,7 +25,7 @@ using ConcreteStructs: @concrete
 using DifferentiationInterface: DifferentiationInterface,
     overloaded_input_type
 using FastClosures: @closure
-using ForwardDiff: ForwardDiff
+using ForwardDiff: ForwardDiff, pickchunksize
 using LinearAlgebra: LinearAlgebra
 using SciMLBase: SciMLBase, BVProblem, EnsembleSerial, EnsembleThreads,
     NonlinearFunction, ODEProblem, StandardBVProblem, TwoPointBVProblem,

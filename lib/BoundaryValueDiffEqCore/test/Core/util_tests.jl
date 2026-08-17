@@ -54,12 +54,6 @@ end
     )
 end
 
-@testset "__pickchunksize developer interface" begin
-    @test BoundaryValueDiffEqCore.__pickchunksize(8) == 8
-    @test BoundaryValueDiffEqCore.__pickchunksize(25) == 9
-    @test BoundaryValueDiffEqCore.__pickchunksize(25, 5) == 5
-end
-
 @testset "__extract_lcons_ucons length" begin
     # Regression test: the function must return vectors matching the actual
     # constraint vector length (= length(resid_prototype)), not a reconstruction
