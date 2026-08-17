@@ -14,11 +14,9 @@ include("reexports.jl")
 run_qa(
     BoundaryValueDiffEq;
     aqua_kwargs = (;
-        ambiguities = false,
         piracies = (; treat_as_own = [SciMLBase.BVProblem]),
     ),
     reexports_allow = ROOT_REEXPORTS,
-    api_docs_kwargs = (; ignore = ROOT_REEXPORTS, rendered_ignore = ROOT_REEXPORTS),
     ei_kwargs = (;
         all_qualified_accesses_are_public = (;
             ignore = (

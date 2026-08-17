@@ -33,7 +33,13 @@ using SparseConnectivityTracer: SparseConnectivityTracer, TracerLocalSparsityDet
 using SparseMatrixColorings: GreedyColoringAlgorithm
 using SciMLStructures: SciMLStructures
 
-@reexport using NonlinearSolveFirstOrder, SciMLBase
+@reexport using NonlinearSolveFirstOrder:
+    GaussNewton, LevenbergMarquardt, NewtonRaphson, TrustRegion
+@reexport using SciMLBase:
+    BVPFunction, BVProblem, DynamicalBVPFunction, NonlinearFunction,
+    NonlinearLeastSquaresProblem, NonlinearProblem, OptimizationFunction,
+    OptimizationProblem, ReturnCode, SecondOrderBVProblem, TwoPointBVProblem,
+    TwoPointSecondOrderBVProblem, init, remake, solve
 
 include("verbosity.jl")
 include("types.jl")
