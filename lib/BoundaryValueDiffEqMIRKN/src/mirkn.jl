@@ -47,7 +47,7 @@ function SciMLBase.__init(
 
     # Don't flatten this here, since we need to expand it later if needed
     y₀ = __initial_guess_on_mesh(prob, prob.u0, Nig, prob.p)
-    chunksize = __pickchunksize(M * (2 * Nig - 2))
+    chunksize = BoundaryValueDiffEqCore.__pickchunksize(M * (2 * Nig - 2))
     __alloc = @closure x -> __maybe_allocate_diffcache(vec(zero(x)), chunksize, alg.jac_alg)
 
     y = __alloc.(copy.(y₀.u))

@@ -144,7 +144,7 @@ function init_nested(
     mesh = __extract_mesh(prob.u0, t₀, t₁, Nig)
     mesh_dt = diff(mesh)
 
-    chunksize = __pickchunksize(M * (Nig - 1))
+    chunksize = BoundaryValueDiffEqCore.__pickchunksize(M * (Nig - 1))
     __alloc = @closure x -> __maybe_allocate_diffcache(vec(x), chunksize, alg.jac_alg)
 
     fᵢ_cache = __alloc(zero(u0))
@@ -323,7 +323,7 @@ function init_expanded(
     f_prototype = isnothing(prob.f.f_prototype) ? nothing : __vec(prob.f.f_prototype)
     L_f_prototype = isnothing(f_prototype) ? M : length(f_prototype)
 
-    chunksize = __pickchunksize(M + M * Nig * (stage + 1))
+    chunksize = BoundaryValueDiffEqCore.__pickchunksize(M + M * Nig * (stage + 1))
     __alloc = @closure x -> __maybe_allocate_diffcache(vec(x), chunksize, alg.jac_alg)
 
     fᵢ_cache = __alloc(zero(u0)) # Runtime dispatch

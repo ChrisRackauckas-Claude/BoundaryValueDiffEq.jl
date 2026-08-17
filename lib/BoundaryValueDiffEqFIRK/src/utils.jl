@@ -13,8 +13,8 @@ function BoundaryValueDiffEqCore.__resize!(x::AbstractVector{<:DiffCache}, n, M,
     N == 0 && return x
     if N > 0
         chunksize = isa(TU, FIRKTableau{false}) ?
-            __pickchunksize(M * (N + length(x) * (s + 1))) :
-            __pickchunksize(M * (N + length(x)))
+            BoundaryValueDiffEqCore.__pickchunksize(M * (N + length(x) * (s + 1))) :
+            BoundaryValueDiffEqCore.__pickchunksize(M * (N + length(x)))
         append!(x, [__maybe_allocate_diffcache(last(x), chunksize) for _ in 1:N])
     else
         resize!(x, (n - 1) * (s + 1) + 1)

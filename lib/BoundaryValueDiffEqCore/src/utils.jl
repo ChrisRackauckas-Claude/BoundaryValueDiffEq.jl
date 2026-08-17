@@ -316,12 +316,12 @@ the solver subpackages when allocating `DiffCache` values.
 # Examples
 
 ```jldoctest
-julia> import BoundaryValueDiffEqCore: __pickchunksize
+julia> import BoundaryValueDiffEqCore
 
-julia> __pickchunksize(8)
+julia> BoundaryValueDiffEqCore.__pickchunksize(8)
 8
 
-julia> __pickchunksize(25)
+julia> BoundaryValueDiffEqCore.__pickchunksize(25)
 9
 ```
 """
