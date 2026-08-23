@@ -21,3 +21,5 @@ run_qa(
     ),
     reexports_allow = FIRK_REEXPORTS,
 )
+
+test_reexport_surface(BoundaryValueDiffEqFIRK, FIRK_REEXPORTS, @__MODULE__)

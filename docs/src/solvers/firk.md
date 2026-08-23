@@ -7,8 +7,8 @@ using Pkg
 Pkg.add("BoundaryValueDiffEqFIRK")
 ```
 
-`BoundaryValueDiffEqFIRK` provides the BVP problem constructors and `solve` used by its
-documented solver workflow:
+`BoundaryValueDiffEqFIRK` reexports the BVP problem constructors and `solve` used by its
+documented solver workflow (see [Reexported API](@ref reexports)):
 
 ```jldoctest
 using BoundaryValueDiffEqFIRK

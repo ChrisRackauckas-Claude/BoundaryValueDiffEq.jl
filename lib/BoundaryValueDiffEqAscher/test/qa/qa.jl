@@ -2,6 +2,8 @@ using SciMLTesting
 using BoundaryValueDiffEqAscher
 using Test
 
+include(joinpath(@__DIR__, "..", "..", "..", "..", "test", "qa", "reexports.jl"))
+
 run_qa(
     BoundaryValueDiffEqAscher;
     ei_kwargs = (;
@@ -12,4 +14,7 @@ run_qa(
         # no public replacement.
         all_qualified_accesses_are_public = (; ignore = (:Dual, :jacobian!)),
     ),
+    reexports_allow = ASCHER_REEXPORTS,
 )
+
+test_reexport_surface(BoundaryValueDiffEqAscher, ASCHER_REEXPORTS, @__MODULE__)

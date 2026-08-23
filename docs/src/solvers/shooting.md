@@ -7,13 +7,13 @@ using Pkg
 Pkg.add("BoundaryValueDiffEqShooting")
 ```
 
-Shooting algorithms operate on problem definitions and solver functions owned by SciMLBase,
-and require an ODE algorithm from its owning solver package:
+`BoundaryValueDiffEqShooting` reexports the problem constructors, `solve` and
+`ReturnCode` its documented workflow uses (see [Reexported API](@ref reexports)); the ODE
+algorithm has to come from its own solver package:
 
 ```jldoctest
-using BoundaryValueDiffEqShooting: MultipleShooting, Shooting
+using BoundaryValueDiffEqShooting
 using OrdinaryDiffEqTsit5: Tsit5
-using SciMLBase: BVProblem, ReturnCode, solve
 
 function f!(du, u, p, t)
     du[1] = u[2]
