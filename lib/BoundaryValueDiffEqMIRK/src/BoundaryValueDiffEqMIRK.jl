@@ -45,6 +45,18 @@ using PreallocationTools: PreallocationTools, get_tmp, LazyBufferCache
 using PrecompileTools: @compile_workload, @setup_workload
 using Preferences: Preferences
 using SparseArrays: sparse
+
+# The public API that BoundaryValueDiffEqMIRK reexports (see the second `export` block
+# below), so that `using BoundaryValueDiffEqMIRK` on its own is enough to pick an AD
+# backend, build a `BVProblem` or `TwoPointBVProblem`, configure the solve, run it, and
+# inspect the result. Every name stays owned and documented by ADTypes,
+# BoundaryValueDiffEqCore, NonlinearSolveFirstOrder or SciMLBase; the set is documented on
+# the Reexported API docs page and approved via `reexports_allow` in test/qa/qa.jl.
+using ADTypes: AutoEnzyme, AutoFiniteDiff, AutoMooncake, AutoPolyesterForwardDiff
+using BoundaryValueDiffEqCore: BVPVerbosity, NewtonRaphson, NoErrorControl, TrustRegion,
+    integral
+using SciMLBase: EnsembleProblem, ODEFunction, init, solve!, successful_retcode
+
 using SciMLStructures: SciMLStructures
 
 const DI = DifferentiationInterface
@@ -178,5 +190,18 @@ end
 
 export MIRK2, MIRK3, MIRK4, MIRK5, MIRK6, MIRK6I
 export maxsol, minsol
+
+# Reexported ADTypes / BoundaryValueDiffEqCore / NonlinearSolveFirstOrder / SciMLBase
+# API; approved via `reexports_allow` in test/qa/qa.jl.
+export AutoEnzyme, AutoFiniteDiff, AutoForwardDiff, AutoMooncake, AutoPolyesterForwardDiff,
+    AutoSparse
+export BVPJacobianAlgorithm, BVPVerbosity, DEFAULT_VERBOSE
+export DefectControl, GlobalErrorControl, SequentialErrorControl, HybridErrorControl,
+    NoErrorControl
+export HOErrorControl, REErrorControl
+export integral
+export GaussNewton, LevenbergMarquardt, NewtonRaphson, TrustRegion
+export BVPFunction, BVProblem, EnsembleProblem, ODEFunction, ReturnCode, TwoPointBVProblem,
+    init, remake, solve, solve!, successful_retcode
 
 end

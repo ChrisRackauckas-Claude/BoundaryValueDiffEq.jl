@@ -39,7 +39,7 @@ using SciMLStructures: SciMLStructures
     BVPFunction, BVProblem, DynamicalBVPFunction, NonlinearFunction,
     NonlinearLeastSquaresProblem, NonlinearProblem, OptimizationFunction,
     OptimizationProblem, ReturnCode, SecondOrderBVProblem, TwoPointBVProblem,
-    TwoPointSecondOrderBVProblem, init, remake, solve
+    TwoPointSecondOrderBVProblem, init, remake, solve, successful_retcode
 
 include("verbosity.jl")
 include("types.jl")

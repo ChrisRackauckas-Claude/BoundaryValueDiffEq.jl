@@ -36,3 +36,5 @@ run_qa(
     ),
     reexports_allow = CORE_REEXPORTS,
 )
+
+test_reexport_surface(BoundaryValueDiffEqCore, CORE_REEXPORTS, @__MODULE__)

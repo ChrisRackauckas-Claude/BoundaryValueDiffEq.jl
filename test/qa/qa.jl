@@ -59,3 +59,5 @@ run_qa(
         ),
     ),
 )
+
+test_reexport_surface(BoundaryValueDiffEq, ROOT_REEXPORTS, @__MODULE__)

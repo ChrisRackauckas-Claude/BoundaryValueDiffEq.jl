@@ -35,7 +35,19 @@ using Setfield: @set
 using SparseArrays: sparse
 using OrdinaryDiffEqTsit5: Tsit5
 using PrecompileTools: @compile_workload, @setup_workload
+
 using Preferences: Preferences
+
+# The public API that BoundaryValueDiffEqShooting reexports (see the second `export` block
+# below), so that `using BoundaryValueDiffEqShooting` on its own is enough to pick an AD
+# backend, build a `BVProblem` or `TwoPointBVProblem`, configure the solve, run it, and
+# inspect the result. Every name stays owned and documented by ADTypes,
+# BoundaryValueDiffEqCore, NonlinearSolveFirstOrder or SciMLBase; the set is documented on
+# the Reexported API docs page and approved via `reexports_allow` in test/qa/qa.jl.
+using ADTypes: AutoEnzyme, AutoFiniteDiff, AutoMooncake, AutoPolyesterForwardDiff
+using BoundaryValueDiffEqCore: BVPVerbosity, DEFAULT_VERBOSE, GaussNewton,
+    LevenbergMarquardt, NewtonRaphson, TrustRegion, integral
+using SciMLBase: BVPFunction, ReturnCode, init, successful_retcode
 
 const DI = DifferentiationInterface
 
@@ -107,5 +119,15 @@ include("sparse_jacobians.jl")
 end
 
 export Shooting, MultipleShooting
+
+# Reexported ADTypes / BoundaryValueDiffEqCore / NonlinearSolveFirstOrder / SciMLBase
+# API; approved via `reexports_allow` in test/qa/qa.jl.
+export AutoEnzyme, AutoFiniteDiff, AutoForwardDiff, AutoMooncake, AutoPolyesterForwardDiff,
+    AutoSparse
+export BVPJacobianAlgorithm, BVPVerbosity, DEFAULT_VERBOSE
+export integral
+export GaussNewton, LevenbergMarquardt, NewtonRaphson, TrustRegion
+export BVPFunction, BVProblem, EnsembleSerial, EnsembleThreads, ODEProblem, ReturnCode,
+    TwoPointBVProblem, init, remake, solve, solve!, successful_retcode
 
 end # module BoundaryValueDiffEqShooting
