@@ -1,7 +1,7 @@
 name = "BoundaryValueDiffEqAscher"
 uuid = "7227322d-7511-4e07-9247-ad6ff830280e"
 authors = ["Qingyu Qu <erikqqy123@gmail.com>"]
-version = "1.15.3"
+version = "1.16.0"
 
 [deps]
 ADTypes = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
@@ -22,7 +22,7 @@ BoundaryValueDiffEqCore = {path = "../BoundaryValueDiffEqCore"}
 SafeTestsets = "0.1.0"
 ADTypes = "1.14"
 AlmostBlockDiagonals = "0.1.10"
-BoundaryValueDiffEqCore = "2.7.3"
+BoundaryValueDiffEqCore = "2.8.1"
 ConcreteStructs = "0.2.3"
 DiffEqDevTools = "2.44, 3"
 DifferentiationInterface = "0.7.15"
