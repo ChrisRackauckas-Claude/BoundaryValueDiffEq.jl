@@ -87,6 +87,16 @@ end
     @test all(iszero, uc2[3:end])
 end
 
+@testset "__default_sparse_ad BigFloat uses dense AD" begin
+    using ADTypes: AutoForwardDiff, AutoSparse
+    using BoundaryValueDiffEqCore: __default_bc_sparse_ad, __default_sparse_ad
+
+    @test __default_sparse_ad(BigFloat) isa AutoForwardDiff
+    @test __default_bc_sparse_ad(BigFloat) isa AutoForwardDiff
+    @test __default_sparse_ad(Float64) isa AutoSparse
+    @test __default_bc_sparse_ad(Float64) isa AutoSparse
+end
+
 @testset "_process_verbose_param foreign AbstractVerbositySpecifier" begin
     # DiffEqBase.DEVerbosity is a foreign AbstractVerbositySpecifier that
     # can flow in via DiffEqBase's `solve`/`init` default `verbose` kwarg.

@@ -140,12 +140,14 @@ end
     AutoFiniteDiff(), sparsity_detector = TracerLocalSparsityDetector(),
     coloring_algorithm = GreedyColoringAlgorithm()
 )
+@inline __sparse_tracer_compatible(::Type{BigFloat}) = false
+@inline __sparse_tracer_compatible(::Type{T}) where {T} = true
 @inline function __default_sparse_ad(::Type{T}) where {T}
-    return AutoSparse(
-        ifelse(ForwardDiff.can_dual(T), AutoForwardDiff(), AutoFiniteDiff()),
-        sparsity_detector = TracerLocalSparsityDetector(),
-        coloring_algorithm = GreedyColoringAlgorithm()
-    )
+    return __sparse_tracer_compatible(T) ? AutoSparse(
+            ifelse(ForwardDiff.can_dual(T), AutoForwardDiff(), AutoFiniteDiff()),
+            sparsity_detector = TracerLocalSparsityDetector(),
+            coloring_algorithm = GreedyColoringAlgorithm()
+        ) : __default_nonsparse_ad(T)
 end
 
 @inline function __default_bc_sparse_ad(x::AbstractArray{T}) where {T}
@@ -157,11 +159,11 @@ end
     coloring_algorithm = GreedyColoringAlgorithm()
 )
 @inline function __default_bc_sparse_ad(::Type{T}) where {T}
-    return AutoSparse(
-        ifelse(ForwardDiff.can_dual(T), AutoForwardDiff(), AutoFiniteDiff()),
-        sparsity_detector = TracerLocalSparsityDetector(),
-        coloring_algorithm = GreedyColoringAlgorithm()
-    )
+    return __sparse_tracer_compatible(T) ? AutoSparse(
+            ifelse(ForwardDiff.can_dual(T), AutoForwardDiff(), AutoFiniteDiff()),
+            sparsity_detector = TracerLocalSparsityDetector(),
+            coloring_algorithm = GreedyColoringAlgorithm()
+        ) : __default_nonsparse_ad(T)
 end
 
 """
