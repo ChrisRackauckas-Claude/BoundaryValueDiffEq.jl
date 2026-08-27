@@ -53,7 +53,19 @@ end
             :LobattoIIIc2, :LobattoIIIc3, :LobattoIIIc4, :LobattoIIIc5,
         ]
     )
-    documented_facade = Set([:BVProblem, :TwoPointBVProblem, :solve])
+    documented_facade = Set(
+        [
+            :AutoEnzyme, :AutoFiniteDiff, :AutoForwardDiff, :AutoMooncake,
+            :AutoPolyesterForwardDiff, :AutoSparse,
+            :BVPJacobianAlgorithm, :BVPVerbosity, :DEFAULT_VERBOSE,
+            :DefectControl, :GlobalErrorControl, :SequentialErrorControl,
+            :HybridErrorControl, :NoErrorControl, :HOErrorControl, :REErrorControl,
+            :integral,
+            :GaussNewton, :LevenbergMarquardt, :NewtonRaphson, :TrustRegion,
+            :BVPFunction, :BVProblem, :EnsembleProblem, :ODEFunction, :ReturnCode,
+            :TwoPointBVProblem, :init, :remake, :solve, :solve!, :successful_retcode,
+        ]
+    )
     actual_exports = Set(names(DocumentedFIRKWorkflow.FIRK))
     delete!(actual_exports, nameof(DocumentedFIRKWorkflow.FIRK))
 
