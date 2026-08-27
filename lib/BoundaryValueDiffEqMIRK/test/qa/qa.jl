@@ -2,9 +2,10 @@ using SciMLTesting
 using BoundaryValueDiffEqMIRK
 using Test
 
+include(joinpath(@__DIR__, "..", "..", "..", "..", "test", "qa", "reexports.jl"))
+
 run_qa(
     BoundaryValueDiffEqMIRK;
-    explicit_imports = true,
     ei_kwargs = (;
         # External internals with no public replacement:
         #   - StandardBVProblem: SciMLBase-owned problem type, not public.
@@ -18,4 +19,7 @@ run_qa(
             ignore = (:Tunable, :canonicalize, :isscimlstructure),
         ),
     ),
+    reexports_allow = MIRK_REEXPORTS,
 )
+
+test_reexport_surface(BoundaryValueDiffEqMIRK, MIRK_REEXPORTS, @__MODULE__)

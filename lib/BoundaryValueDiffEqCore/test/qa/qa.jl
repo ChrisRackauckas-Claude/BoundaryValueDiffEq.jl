@@ -2,11 +2,11 @@ using SciMLTesting
 using BoundaryValueDiffEqCore
 using Test
 
+include(joinpath(@__DIR__, "..", "..", "..", "..", "test", "qa", "reexports.jl"))
+
 run_qa(
     BoundaryValueDiffEqCore;
-    explicit_imports = true,
     aqua_kwargs = (;
-        ambiguities = (; recursive = false),
         stale_deps = (; ignore = [:TimerOutputs]),
     ),
     ei_kwargs = (;
@@ -34,4 +34,7 @@ run_qa(
             ),
         ),
     ),
+    reexports_allow = CORE_REEXPORTS,
 )
+
+test_reexport_surface(BoundaryValueDiffEqCore, CORE_REEXPORTS, @__MODULE__)

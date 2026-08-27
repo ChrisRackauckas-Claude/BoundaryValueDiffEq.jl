@@ -2,17 +2,16 @@ using SciMLTesting
 using BoundaryValueDiffEqShooting
 using Test
 
+include(joinpath(@__DIR__, "..", "..", "..", "..", "test", "qa", "reexports.jl"))
+
 run_qa(
     BoundaryValueDiffEqShooting;
-    explicit_imports = true,
-    aqua_kwargs = (; persistent_tasks = false),
     ei_kwargs = (;
-        # All external internals with no public replacement:
-        #   - StandardBVProblem: SciMLBase-owned BVP problem type, not public.
-        #   - overloaded_input_type: DifferentiationInterface internal.
-        #   - pickchunksize: ForwardDiff internal.
         all_explicit_imports_are_public = (;
-            ignore = (:StandardBVProblem, :overloaded_input_type, :pickchunksize),
+            ignore = (:overloaded_input_type, :pickchunksize),
         ),
     ),
+    reexports_allow = SHOOTING_REEXPORTS,
 )
+
+test_reexport_surface(BoundaryValueDiffEqShooting, SHOOTING_REEXPORTS, @__MODULE__)
