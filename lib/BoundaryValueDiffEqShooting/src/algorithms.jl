@@ -71,8 +71,10 @@ end
 end
 
 """
-    MultipleShooting(; nshoots::Int, ode_alg = nothing, nlsolve = nothing,
-        optimize = nothing, grid_coarsening = true, jac_alg = nothing) -> MultipleShooting
+    MultipleShooting(;
+            nshoots::Int, ode_alg = nothing, nlsolve = nothing,
+            optimize = nothing, grid_coarsening = true, jac_alg = nothing
+        ) -> MultipleShooting
     MultipleShooting(nshoots::Int; kwargs...)
     MultipleShooting(nshoots::Int, ode_alg; kwargs...)
     MultipleShooting(nshoots::Int, ode_alg, nlsolve; kwargs...)
