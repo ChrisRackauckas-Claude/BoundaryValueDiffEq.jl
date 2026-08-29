@@ -53,11 +53,21 @@ end
             :LobattoIIIc2, :LobattoIIIc3, :LobattoIIIc4, :LobattoIIIc5,
         ]
     )
-    documented_facade = Set([:BVProblem, :TwoPointBVProblem, :solve])
-    actual_exports = Set(names(DocumentedFIRKWorkflow.FIRK))
-    delete!(actual_exports, nameof(DocumentedFIRKWorkflow.FIRK))
+    # Only the names the package owns; the rest of `names` is the reexported API
+    # documented elsewhere, pinned against `FIRK_REEXPORTS` by test/qa/qa.jl.
+    owned = Set(
+        filter(names(DocumentedFIRKWorkflow.FIRK)) do name
+            which(DocumentedFIRKWorkflow.FIRK, name) === DocumentedFIRKWorkflow.FIRK
+        end
+    )
+    delete!(owned, nameof(DocumentedFIRKWorkflow.FIRK))
 
-    @test actual_exports == union(firk_algorithms, documented_facade)
+    @test owned == firk_algorithms
+
+    # The names the workflow module above spells unqualified have to reach it from
+    # `using BoundaryValueDiffEqFIRK` alone.
+    documented_facade = [:BVProblem, :TwoPointBVProblem, :solve]
+    @test all(name -> isdefined(DocumentedFIRKWorkflow, name), documented_facade)
 
     sol, two_point_sol = DocumentedFIRKWorkflow.solve_documented_problems()
     @test isapprox(sol(0.0)[1], 1.0; atol = 1.0e-6)
