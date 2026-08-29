@@ -2,7 +2,12 @@ using BoundaryValueDiffEqAscher
 using Test
 
 @testset "Public API" begin
-    @test Set(names(BoundaryValueDiffEqAscher)) == Set(
+    # Only the names this package owns; the rest of `names` is the reexported API
+    # documented elsewhere, pinned against `ASCHER_REEXPORTS` by test/qa/qa.jl.
+    owned = filter(names(BoundaryValueDiffEqAscher)) do name
+        which(BoundaryValueDiffEqAscher, name) === BoundaryValueDiffEqAscher
+    end
+    @test Set(owned) == Set(
         (
             :Ascher1,
             :Ascher2,
