@@ -18,7 +18,7 @@ module ExternalBVPAlgorithmExtension
     ) = ExternalBVPCache(prob, init_arg, adaptive)
 
     SciMLBase.solve!(cache::ExternalBVPCache) =
-        (; prob = cache.prob, init_arg = cache.init_arg, adaptive = cache.adaptive)
+        (; cache.prob, cache.init_arg, cache.adaptive)
 
     struct ExternalCombinedErrorControl <: BoundaryValueDiffEqCore.AbstractErrorControl end
 

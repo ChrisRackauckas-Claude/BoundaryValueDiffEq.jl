@@ -93,28 +93,28 @@ end
 
 function SciMLBase.__init(
         prob::BVProblem, alg::AbstractFIRK; dt = 0.0, abstol = 1.0e-6, adaptive = true,
-        controller = DefectControl(), nlsolve_kwargs = (; abstol = abstol),
-        optimize_kwargs = (; abstol = abstol), verbose = DEFAULT_VERBOSE, kwargs...
+        controller = DefectControl(), nlsolve_kwargs = (; abstol),
+        optimize_kwargs = (; abstol), verbose = DEFAULT_VERBOSE, kwargs...
     )
     if alg.nested_nlsolve
         return init_nested(
-            prob, alg; dt = dt, abstol = abstol, adaptive = adaptive,
-            controller = controller, nlsolve_kwargs = nlsolve_kwargs,
-            optimize_kwargs = optimize_kwargs, verbose = verbose, kwargs...
+            prob, alg; dt, abstol, adaptive,
+            controller, nlsolve_kwargs,
+            optimize_kwargs, verbose, kwargs...
         )
     else
         return init_expanded(
-            prob, alg; dt = dt, abstol = abstol, adaptive = adaptive,
-            controller = controller, nlsolve_kwargs = nlsolve_kwargs,
-            optimize_kwargs = optimize_kwargs, verbose = verbose, kwargs...
+            prob, alg; dt, abstol, adaptive,
+            controller, nlsolve_kwargs,
+            optimize_kwargs, verbose, kwargs...
         )
     end
 end
 
 function init_nested(
         prob::BVProblem, alg::AbstractFIRK; dt = 0.0, abstol = 1.0e-6, adaptive = true,
-        controller = DefectControl(), nlsolve_kwargs = (; abstol = abstol),
-        optimize_kwargs = (; abstol = abstol), verbose = DEFAULT_VERBOSE, kwargs...
+        controller = DefectControl(), nlsolve_kwargs = (; abstol),
+        optimize_kwargs = (; abstol), verbose = DEFAULT_VERBOSE, kwargs...
     )
     verbose_spec = _process_verbose_param(verbose)
     @set! alg.jac_alg = concrete_jacobian_algorithm(alg.jac_alg, prob, alg)
@@ -140,7 +140,7 @@ function init_nested(
     ig, T,
         M,
         Nig,
-        u0 = __extract_problem_details(prob; dt, check_positive_dt = true, tune_parameters = tune_parameters)
+        u0 = __extract_problem_details(prob; dt, check_positive_dt = true, tune_parameters)
     mesh = __extract_mesh(prob.u0, t₀, t₁, Nig)
     mesh_dt = diff(mesh)
 
@@ -151,7 +151,7 @@ function init_nested(
     fᵢ₂_cache = vec(zero(u0))
 
     # Don't flatten this here, since we need to expand it later if needed
-    y₀ = __initial_guess_on_mesh(prob.u0, mesh, prob.p; tune_parameters = tune_parameters)
+    y₀ = __initial_guess_on_mesh(prob.u0, mesh, prob.p; tune_parameters)
 
     y = __alloc.(copy.(y₀.u))
     TU, ITU = constructRK(alg, T)
@@ -263,13 +263,13 @@ function init_nested(
     # would embed e.g. an entire previous solution's type in the cache and force
     # recompilation of all downstream code against it (issue #500).
     prob_ = if !(prob.u0 isa AbstractArray) || prob.u0 isa AbstractVectorOfArray
-        remake(prob; u0 = u0)
+        remake(prob; u0)
     else
         prob
     end
 
     # Somewhat arbitrary initialization of K
-    K0 = __K0_on_u0(prob, stage; tune_parameters = tune_parameters)
+    K0 = __K0_on_u0(prob, stage; tune_parameters)
 
     nestprob_p = zeros(T, M + 2)
 
@@ -289,8 +289,8 @@ end
 
 function init_expanded(
         prob::BVProblem, alg::AbstractFIRK; dt = 0.0, abstol = 1.0e-6, adaptive = true,
-        controller = DefectControl(), nlsolve_kwargs = (; abstol = abstol),
-        optimize_kwargs = (; abstol = abstol), verbose = DEFAULT_VERBOSE, kwargs...
+        controller = DefectControl(), nlsolve_kwargs = (; abstol),
+        optimize_kwargs = (; abstol), verbose = DEFAULT_VERBOSE, kwargs...
     )
     verbose_spec = _process_verbose_param(verbose)
     @set! alg.jac_alg = concrete_jacobian_algorithm(alg.jac_alg, prob, alg)
@@ -314,7 +314,7 @@ function init_expanded(
     ig, T,
         M,
         Nig,
-        u0 = __extract_problem_details(prob; dt, check_positive_dt = true, tune_parameters = tune_parameters)
+        u0 = __extract_problem_details(prob; dt, check_positive_dt = true, tune_parameters)
     mesh = __extract_mesh(prob.u0, t₀, t₁, Nig)
     mesh_dt = diff(mesh)
 
@@ -330,7 +330,7 @@ function init_expanded(
     fᵢ₂_cache = vec(zero(u0))
 
     # Don't flatten this here, since we need to expand it later if needed
-    _y₀ = __initial_guess_on_mesh(prob.u0, mesh, prob.p; tune_parameters = tune_parameters)
+    _y₀ = __initial_guess_on_mesh(prob.u0, mesh, prob.p; tune_parameters)
     y₀ = extend_y(_y₀, Nig + 1, stage)
     y = __alloc.(copy.(y₀.u)) # Runtime dispatch
 
@@ -439,7 +439,7 @@ function init_expanded(
     # would embed e.g. an entire previous solution's type in the cache and force
     # recompilation of all downstream code against it (issue #500).
     prob_ = if !(prob.u0 isa AbstractArray) || prob.u0 isa AbstractVectorOfArray
-        remake(prob; u0 = u0)
+        remake(prob; u0)
     else
         prob
     end
@@ -792,7 +792,7 @@ function __construct_problem(
 
     cost_fun = __build_cost(
         prob.f.cost, cache, cache.mesh, cache.M;
-        tune_parameters, p = cache.p
+        tune_parameters, cache.p
     )
 
     resid_prototype = vcat(resid_bc, resid_collocation)
@@ -910,7 +910,7 @@ function __construct_problem(
 
     cost_fun = __build_cost(
         prob.f.cost, cache, cache.mesh, cache.M;
-        tune_parameters, p = cache.p
+        tune_parameters, cache.p
     )
 
     resid_prototype = vcat(resid_bc, resid_collocation)
@@ -977,7 +977,7 @@ function __construct_problem(
 
     cost_fun = __build_cost(
         prob.f.cost, cache, cache.mesh, cache.M;
-        tune_parameters, p = cache.p
+        tune_parameters, cache.p
     )
 
     resid_prototype = copy(resid)
@@ -1059,7 +1059,7 @@ function __construct_problem(
 
     cost_fun = __build_cost(
         prob.f.cost, cache, cache.mesh, cache.M;
-        tune_parameters, p = cache.p
+        tune_parameters, cache.p
     )
 
     resid_prototype = copy(resid)
@@ -1146,7 +1146,7 @@ function __construct_problem(
 
     cost_fun = __build_cost(
         prob.f.cost, cache, cache.mesh, cache.M;
-        tune_parameters, p = cache.p
+        tune_parameters, cache.p
     )
 
     resid_prototype = vcat(resid_bc, resid_collocation)
@@ -1257,7 +1257,7 @@ function __construct_problem(
 
     cost_fun = __build_cost(
         prob.f.cost, cache, cache.mesh, cache.M;
-        tune_parameters, p = cache.p
+        tune_parameters, cache.p
     )
 
     resid_prototype = vcat(resid_bc, resid_collocation)
@@ -1321,7 +1321,7 @@ function __construct_problem(
 
     cost_fun = __build_cost(
         prob.f.cost, cache, cache.mesh, cache.M;
-        tune_parameters, p = cache.p
+        tune_parameters, cache.p
     )
 
     resid_prototype = copy(resid)
@@ -1391,7 +1391,7 @@ function __construct_problem(
 
     cost_fun = __build_cost(
         prob.f.cost, cache, cache.mesh, cache.M;
-        tune_parameters, p = cache.p
+        tune_parameters, cache.p
     )
 
     resid_prototype = copy(resid)

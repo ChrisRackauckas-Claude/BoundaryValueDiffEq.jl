@@ -371,7 +371,7 @@ function __extract_problem_details(
     # Problem passes in a initial guess function
     positive_dt(check_positive_dt, dt)
 
-    u0 = __initial_guess(f, prob.p, prob.tspan[1]; tune_parameters = tune_parameters)
+    u0 = __initial_guess(f, prob.p, prob.tspan[1]; tune_parameters)
     t₀, t₁ = prob.tspan
     return Val(true), eltype(u0), length(u0), Int(cld(t₁ - t₀, dt)), u0
 end

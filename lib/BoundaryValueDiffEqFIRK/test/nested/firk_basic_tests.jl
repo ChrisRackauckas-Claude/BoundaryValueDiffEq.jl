@@ -194,7 +194,7 @@ end
             prob,
             radau_solver(
                 Val(stage); nested_nlsolve = nested,
-                nested_nlsolve_kwargs = nested_nlsolve_kwargs
+                nested_nlsolve_kwargs
             );
             dt = 0.005
         )
@@ -205,7 +205,7 @@ end
             prob,
             lobattoIIIa_solver(
                 Val(stage); nested_nlsolve = nested,
-                nested_nlsolve_kwargs = nested_nlsolve_kwargs
+                nested_nlsolve_kwargs
             );
             dt = 0.005
         )
@@ -216,7 +216,7 @@ end
             prob,
             lobattoIIIb_solver(
                 Val(stage); nested_nlsolve = nested,
-                nested_nlsolve_kwargs = nested_nlsolve_kwargs
+                nested_nlsolve_kwargs
             );
             dt = 0.005
         )
@@ -227,7 +227,7 @@ end
             prob,
             lobattoIIIb_solver(
                 Val(stage); nested_nlsolve = nested,
-                nested_nlsolve_kwargs = nested_nlsolve_kwargs
+                nested_nlsolve_kwargs
             );
             dt = 0.005
         )

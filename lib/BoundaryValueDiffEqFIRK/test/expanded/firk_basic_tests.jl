@@ -132,7 +132,7 @@ end
                         )
                         adaptive = ifelse(stage == 2, false, true) # LobattoIIIa2 is not adaptive
                         @time sol = solve(
-                            prob_bvp_linear, lobatto_solver(Val(stage)); dt = 0.001, adaptive = adaptive
+                            prob_bvp_linear, lobatto_solver(Val(stage)); dt = 0.001, adaptive
                         )
                         @test sol(0.001) ≈ [0.998687464, -1.312035941] atol = testTol
                         @test sol(0.001; idxs = [1, 2]) ≈ [0.998687464, -1.312035941] atol = testTol
@@ -146,7 +146,7 @@ end
                         )
                         adaptive = ifelse(stage == 2, false, true) # LobattoIIIa2 is not adaptive
                         @time sol = solve(
-                            prob_bvp_linear, lobatto_solver(Val(stage)); dt = 0.001, adaptive = adaptive
+                            prob_bvp_linear, lobatto_solver(Val(stage)); dt = 0.001, adaptive
                         )
                         sol_analytic = prob_bvp_linear_analytic(nothing, λ, 0.04)
                         dsol_analytic = prob_bvp_linear_analytic_derivative(nothing, λ, 0.04)

@@ -120,8 +120,8 @@ function __construct_internal_problem(
     iip = SciMLBase.isinplace(prob)
     if !isnothing(alg.nlsolve) || (isnothing(alg.nlsolve) && isnothing(alg.optimize))
         nlf = NonlinearFunction{iip}(
-            loss; jac = jac, resid_prototype = resid_prototype,
-            jac_prototype = jac_prototype
+            loss; jac, resid_prototype,
+            jac_prototype
         )
         return __internal_nlsolve_problem(prob, resid_prototype, y, nlf, y, p)
     else
@@ -138,7 +138,7 @@ function __construct_internal_problem(
         lb, ub = __extract_lb_ub(prob, T, M, N)
 
         return __internal_optimization_problem(
-            prob, optf, y, p; lcons = lcons, ucons = ucons, lb = lb, ub = ub
+            prob, optf, y, p; lcons, ucons, lb, ub
         )
     end
 end
@@ -151,8 +151,8 @@ function __construct_internal_problem(
     iip = SciMLBase.isinplace(prob)
     if !isnothing(alg.nlsolve) || (isnothing(alg.nlsolve) && isnothing(alg.optimize))
         nlf = NonlinearFunction{iip}(
-            loss; jac = jac, resid_prototype = resid_prototype,
-            jac_prototype = jac_prototype
+            loss; jac, resid_prototype,
+            jac_prototype
         )
         return __internal_nlsolve_problem(prob, resid_prototype, y, nlf, y, p)
     else
@@ -167,7 +167,7 @@ function __construct_internal_problem(
         lb, ub = __extract_lb_ub(prob, T, M, N)
 
         return __internal_optimization_problem(
-            prob, optf, y, p; lcons = lcons, ucons = ucons, lb = lb, ub = ub
+            prob, optf, y, p; lcons, ucons, lb, ub
         )
     end
 end
@@ -181,8 +181,8 @@ function __construct_internal_problem(
     T = eltype(y)
     if !isnothing(alg.nlsolve) || (isnothing(alg.nlsolve) && isnothing(alg.optimize))
         nlf = NonlinearFunction{iip}(
-            loss; jac = jac, resid_prototype = resid_prototype,
-            jac_prototype = jac_prototype
+            loss; jac, resid_prototype,
+            jac_prototype
         )
         return __internal_nlsolve_problem(prob, resid_prototype, y, nlf, y, p)
     else
@@ -197,7 +197,7 @@ function __construct_internal_problem(
         lb, ub = __extract_lb_ub(prob, T, M, N)
 
         return __internal_optimization_problem(
-            prob, optf, y, p; lcons = lcons, ucons = ucons, lb = lb, ub = ub
+            prob, optf, y, p; lcons, ucons, lb, ub
         )
     end
 end
@@ -221,8 +221,8 @@ function __construct_internal_problem(
     T = eltype(y)
     if !isnothing(alg.nlsolve) || (isnothing(alg.nlsolve) && isnothing(alg.optimize))
         nlf = NonlinearFunction{true}(
-            loss; jac = jac, resid_prototype = resid_prototype,
-            jac_prototype = jac_prototype
+            loss; jac, resid_prototype,
+            jac_prototype
         )
         return __internal_nlsolve_problem(prob, resid_prototype, y, nlf, y, p)
     else
@@ -237,7 +237,7 @@ function __construct_internal_problem(
         lb, ub = __extract_lb_ub(prob, T, M, N)
 
         return __internal_optimization_problem(
-            prob, optf, y, p; lcons = lcons, ucons = ucons, lb = lb, ub = ub
+            prob, optf, y, p; lcons, ucons, lb, ub
         )
     end
 end
@@ -249,8 +249,8 @@ function __construct_internal_problem(
     #iip = SciMLBase.isinplace(prob)
     if !isnothing(alg.nlsolve) || (isnothing(alg.nlsolve) && isnothing(alg.optimize))
         nlf = NonlinearFunction{true}(
-            loss; jac = jac, resid_prototype = resid_prototype,
-            jac_prototype = jac_prototype
+            loss; jac, resid_prototype,
+            jac_prototype
         )
         return __internal_nlsolve_problem(prob, resid_prototype, y, nlf, y, p)
     else
@@ -267,7 +267,7 @@ function __construct_internal_problem(
         lb, ub = __extract_lb_ub(prob, T, M, N)
 
         return __internal_optimization_problem(
-            prob, optf, y, p; lcons = lcons, ucons = ucons, lb = lb, ub = ub
+            prob, optf, y, p; lcons, ucons, lb, ub
         )
     end
 end
@@ -281,8 +281,8 @@ function __construct_internal_problem(
     iip = SciMLBase.isinplace(prob)
     if !isnothing(alg.nlsolve) || (isnothing(alg.nlsolve) && isnothing(alg.optimize))
         nlf = NonlinearFunction{iip}(
-            loss; jac = jac, resid_prototype = resid_prototype,
-            jac_prototype = jac_prototype
+            loss; jac, resid_prototype,
+            jac_prototype
         )
         return __internal_nlsolve_problem(prob, resid_prototype, y, nlf, y, p)
     else
@@ -297,7 +297,7 @@ function __construct_internal_problem(
         lb, ub = __extract_lb_ub(prob, T, M, N)
 
         return __internal_optimization_problem(
-            prob, optf, y, p; lcons = lcons, ucons = ucons, lb = lb, ub = ub
+            prob, optf, y, p; lcons, ucons, lb, ub
         )
     end
 end
@@ -309,8 +309,8 @@ function __construct_internal_problem(
     iip = SciMLBase.isinplace(prob)
     if !isnothing(alg.nlsolve) || (isnothing(alg.nlsolve) && isnothing(alg.optimize))
         nlf = NonlinearFunction{iip}(
-            loss; jac = jac, resid_prototype = resid_prototype,
-            jac_prototype = jac_prototype
+            loss; jac, resid_prototype,
+            jac_prototype
         )
         return __internal_nlsolve_problem(prob, resid_prototype, y, nlf, y, p)
     else
@@ -327,7 +327,7 @@ function __construct_internal_problem(
         lb, ub = __extract_lb_ub(prob, T, M, N)
 
         return __internal_optimization_problem(
-            prob, optf, y, p; lcons = lcons, ucons = ucons, lb = lb, ub = ub
+            prob, optf, y, p; lcons, ucons, lb, ub
         )
     end
 end
